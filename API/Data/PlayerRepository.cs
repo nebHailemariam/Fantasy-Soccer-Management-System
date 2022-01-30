@@ -1,5 +1,6 @@
 using API.Entities;
 using API.Helpers;
+using API.Helpers.Filter;
 using Microsoft.EntityFrameworkCore;
 using System.Net;
 
@@ -53,6 +54,13 @@ namespace API.Data
                 throw new AppException("Player not found", statusCode: HttpStatusCode.NotFound);
             }
             return player;
+        }
+
+        public async Task<PagedList<Player>> SearchAsync(QueryStringParameters queryStringParameters, FilterParameters<Player> filterParameters)
+        {
+            return await PagedList<Player>.ToPagedList(filterParameters.Apply(_context.Players.Include(p => p.Team).OrderByDescending(p => p.CreatedAt)),
+                   queryStringParameters.PageNumber,
+                   queryStringParameters.PageSize);
         }
 
         public async Task UpdateNameAndCountryAsync(Guid id, string FirstName, string LastName, string Country)
