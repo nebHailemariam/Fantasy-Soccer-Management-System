@@ -8,6 +8,6 @@ namespace API.Helpers.Filter
 
         ConstantExpression GetValue(string input);
 
-        Expression GetComparison(MemberExpression left, string op, ConstantExpression right);
+        Expression GetComparison<T>(MemberExpression left, string op, ConstantExpression right);
     }
 }

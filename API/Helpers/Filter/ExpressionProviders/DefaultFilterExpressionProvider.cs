@@ -12,7 +12,7 @@ namespace API.Helpers.Filter.ExpressionProviders
             yield return EqualsOperator;
         }
 
-        public virtual Expression GetComparison(MemberExpression left, string op, ConstantExpression right)
+        public virtual Expression GetComparison<T>(MemberExpression left, string op, ConstantExpression right)
         {
             return op.ToLower() switch
             {

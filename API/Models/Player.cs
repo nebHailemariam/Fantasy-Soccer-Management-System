@@ -6,6 +6,7 @@ namespace API.Entities
     public class Player
     {
         public Guid Id { get; set; }
+        [FilterStringContains]
         public string FirstName { get; set; }
         public string LastName { get; set; }
         [FilterAttribute]

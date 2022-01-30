@@ -19,7 +19,7 @@ namespace API.Helpers.Filter.ExpressionProviders
                 LessThanEqualToOperator
             });
 
-        public override Expression GetComparison(MemberExpression left, string op, ConstantExpression right)
+        public override Expression GetComparison<T>(MemberExpression left, string op, ConstantExpression right)
         {
             return op.ToLower() switch
             {
@@ -27,7 +27,7 @@ namespace API.Helpers.Filter.ExpressionProviders
                 GreaterThanEqualToOperator => Expression.GreaterThanOrEqual(left, right),
                 LessThanOperator => Expression.LessThan(left, right),
                 LessThanEqualToOperator => Expression.LessThanOrEqual(left, right),
-                _ => base.GetComparison(left, op, right),
+                _ => base.GetComparison<T>(left, op, right),
             };
         }
     }

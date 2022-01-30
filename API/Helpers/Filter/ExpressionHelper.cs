@@ -37,17 +37,18 @@ namespace API.Helpers.Filter
         public static LambdaExpression GetLambda(Type source, Type dest, ParameterExpression obj, Expression arg)
         {
             var lambdaBuilder = GetLambdaFuncBuilder(source, dest);
-            return (LambdaExpression)lambdaBuilder.Invoke(null, new object[] { arg, new[] { obj } });
+            var x = (LambdaExpression)lambdaBuilder.Invoke(null, new object[] { arg, new[] { obj } });
+            return x;
         }
 
-        public static IQueryable<T> CallWhere<T>(IQueryable<T> query, LambdaExpression predicate)
+        public static List<T> CallWhere<T>(IQueryable<T> query, LambdaExpression predicate)
         {
-            var whereMethodBuilder = QueryableMethods
+            MethodInfo whereMethodBuilder = QueryableMethods
                 .First(x => x.Name == "Where" && x.GetParameters().Length == 2)
                 .MakeGenericMethod(new[] { typeof(T) });
 
-            return (IQueryable<T>)whereMethodBuilder
-                .Invoke(null, new object[] { query, predicate });
+            return (List<T>)whereMethodBuilder
+                .Invoke(null, new object[] { query.ToList(), predicate });
         }
 
         public static IQueryable<TEntity> CallOrderByOrThenBy<TEntity>(

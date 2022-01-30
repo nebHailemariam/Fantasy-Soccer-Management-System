@@ -83,11 +83,11 @@ namespace API.Helpers.Filter
                 var lhs = ExpressionHelper.GetPropertyExpression(obj, propertyInfo);
                 var rhs = term.ExpressionProvider.GetValue(term.Value);
                 var comparisonExpression = term.ExpressionProvider
-                    .GetComparison(lhs, term.Operator, rhs);
+                    .GetComparison<T>(lhs, term.Operator, rhs);
                 var lambdaExpression = ExpressionHelper
                     .GetLambda<T, bool>(obj, comparisonExpression);
 
-                modifiedQuery = ExpressionHelper.CallWhere(modifiedQuery, lambdaExpression);
+                modifiedQuery = ExpressionHelper.CallWhere(modifiedQuery, lambdaExpression).AsQueryable();
             }
 
             return modifiedQuery;
