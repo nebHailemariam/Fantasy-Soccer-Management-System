@@ -1,6 +1,8 @@
 using API.Data;
 using API.Dtos;
+using API.Entities;
 using API.Helpers;
+using API.Helpers.Filter;
 using API.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -25,6 +27,14 @@ namespace API.Controllers
         public async Task<IActionResult> Get([FromRoute] Guid id)
         {
             return Ok(await _playerRepository.GetByIdAsync(id));
+        }
+
+        [HttpGet("search")]
+        public async Task<IActionResult> Search([FromQuery] QueryStringParameters queryStringParameters, [FromQuery] FilterParameters<Player> filterParameters)
+        {
+            var players = await _playerRepository.SearchAsync(queryStringParameters, filterParameters);
+            Response.AddPagination(ref players);
+            return Ok(players);
         }
 
         [HttpPatch("{id}/current-user")]
