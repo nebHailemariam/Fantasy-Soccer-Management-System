@@ -1,6 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 using System.Reflection;
 
 namespace API.Helpers.Filter
@@ -11,7 +9,7 @@ namespace API.Helpers.Filter
             .GetMethods()
             .First(x => x.Name == "Lambda" && x.ContainsGenericParameters && x.GetParameters().Length == 2);
 
-        private static MethodInfo[] QueryableMethods = typeof(Queryable)
+        private static readonly MethodInfo[] QueryableMethods = typeof(Queryable)
             .GetMethods()
             .ToArray();
 
