@@ -56,9 +56,9 @@ namespace API.Data
             return player;
         }
 
-        public async Task<PagedList<Player>> SearchAsync(QueryStringParameters queryStringParameters, FilterParameters<Player> filterParameters)
+        public async Task<PagedList<Player>> SearchAsync(QueryStringParameters queryStringParameters, FilterParameters<Player> filterParameters, string nameSearch)
         {
-            return await PagedList<Player>.ToPagedList(filterParameters.Apply(_context.Players.Include(p => p.Team).OrderByDescending(p => p.CreatedAt)),
+            return await PagedList<Player>.ToPagedList(filterParameters.Apply(_context.Players.Where(p => string.IsNullOrWhiteSpace(nameSearch) || (p.FirstName + p.LastName).Contains(nameSearch)).Include(p => p.Team).OrderByDescending(p => p.CreatedAt)),
                    queryStringParameters.PageNumber,
                    queryStringParameters.PageSize);
         }

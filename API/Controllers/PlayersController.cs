@@ -27,9 +27,9 @@ namespace API.Controllers
         }
 
         [HttpGet("search")]
-        public async Task<IActionResult> Search([FromQuery] QueryStringParameters queryStringParameters, [FromQuery] FilterParameters<Player> filterParameters)
+        public async Task<IActionResult> Search([FromQuery] QueryStringParameters queryStringParameters, [FromQuery] FilterParameters<Player> filterParameters, [FromQuery] string nameSearch)
         {
-            var players = await _playerService.SearchAsync(queryStringParameters, filterParameters);
+            var players = await _playerService.SearchAsync(queryStringParameters, filterParameters, nameSearch);
             Response.AddPagination(ref players);
             return Ok(players);
         }
