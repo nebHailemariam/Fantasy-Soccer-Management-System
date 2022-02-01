@@ -10,7 +10,6 @@ using System.Net;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Net.Http.Headers;
-using API.Entities;
 
 namespace Test.IntegrationTests
 {
@@ -60,7 +59,7 @@ namespace Test.IntegrationTests
             // Act
             response = await _client.GetAsync(currentUserPlayersEndpoint);
             content = await response.Content.ReadAsStringAsync();
-            var players = JsonConvert.DeserializeObject<List<Player>>(content);
+            var players = JsonConvert.DeserializeObject<List<PlayerResponseDto>>(content);
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -115,7 +114,7 @@ namespace Test.IntegrationTests
             // Act
             response = await _client.GetAsync(PlayersOnTheMarketEndpoint);
             content = await response.Content.ReadAsStringAsync();
-            var transfers = JsonConvert.DeserializeObject<List<Transfer>>(content);
+            var transfers = JsonConvert.DeserializeObject<List<TransferResponseDto>>(content);
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
