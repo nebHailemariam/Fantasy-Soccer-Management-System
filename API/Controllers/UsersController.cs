@@ -10,11 +10,9 @@ namespace API.Controllers
     [Route("api/[controller]")]
     public class UsersController : ControllerBase
     {
-        private readonly IUserRepository _userRepository;
         private readonly IUserService _userService;
-        public UsersController(IUserRepository userRepository, IUserService userService)
+        public UsersController(IUserService userService)
         {
-            _userRepository = userRepository;
             _userService = userService;
         }
 
@@ -23,7 +21,7 @@ namespace API.Controllers
         public async Task<IActionResult> GetProfile()
         {
             var currentUserId = User.FindFirst("id").Value;
-            return Ok(await _userRepository.GetProfileAsync(currentUserId));
+            return Ok(await _userService.GetProfileAsync(currentUserId));
         }
 
         [HttpPost("login")]

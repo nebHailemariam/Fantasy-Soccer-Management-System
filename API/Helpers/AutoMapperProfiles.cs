@@ -13,6 +13,9 @@ namespace API.Helpers
             CreateMap(typeof(PagedList<>), typeof(PagedList<>)).ConvertUsing(typeof(PagedListTypeConverter<,>));
             CreateMap<TeamDto, Team>();
             CreateMap<TransferCreateDto, Transfer>();
+            CreateMap<Player, PlayerResponseDto>();
+            CreateMap<Team, TeamResponseDto>();
+            CreateMap<Transfer, TransferResponseDto>();
         }
     }
 }

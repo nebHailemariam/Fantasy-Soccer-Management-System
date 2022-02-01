@@ -10,7 +10,7 @@ namespace API.Data
         Task<List<Player>> CreateAsync(DataContext context, List<Player> players);
         Task DeleteByIdAsync(string id);
         Task<PagedList<Player>> GetAsync(QueryStringParameters queryStringParameters);
-        Task<List<Player>> GetAsync(Guid teamId);
+        Task<List<Player>> GetByTeamIdAsync(Guid teamId);
         Task<Player> GetByIdAsync(Guid id);
         Task<PagedList<Player>> SearchAsync(QueryStringParameters queryStringParameters, FilterParameters<Player> filterParameters);
         Task UpdateNameAndCountryAsync(Guid id, string FirstName, string LastName, string Country);

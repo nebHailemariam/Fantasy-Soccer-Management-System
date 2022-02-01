@@ -1,4 +1,3 @@
-using API.Data;
 using API.Dtos;
 using API.Entities;
 using API.Helpers;
@@ -14,25 +13,23 @@ namespace API.Controllers
     [Route("api/[controller]")]
     public class PlayersController : ControllerBase
     {
-        private readonly IPlayerRepository _playerRepository;
         private readonly IPlayerService _playerService;
 
-        public PlayersController(IPlayerRepository playerRepository, IPlayerService playerService)
+        public PlayersController(IPlayerService playerService)
         {
-            _playerRepository = playerRepository;
             _playerService = playerService;
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> Get([FromRoute] Guid id)
         {
-            return Ok(await _playerRepository.GetByIdAsync(id));
+            return Ok(await _playerService.GetByIdAsync(id));
         }
 
         [HttpGet("search")]
         public async Task<IActionResult> Search([FromQuery] QueryStringParameters queryStringParameters, [FromQuery] FilterParameters<Player> filterParameters)
         {
-            var players = await _playerRepository.SearchAsync(queryStringParameters, filterParameters);
+            var players = await _playerService.SearchAsync(queryStringParameters, filterParameters);
             Response.AddPagination(ref players);
             return Ok(players);
         }
@@ -55,7 +52,7 @@ namespace API.Controllers
         [HttpGet]
         public async Task<IActionResult> Get([FromQuery] QueryStringParameters queryStringParamenter)
         {
-            var posts = await _playerRepository.GetAsync(queryStringParamenter);
+            var posts = await _playerService.GetAsync(queryStringParamenter);
             Response.AddPagination(ref posts);
             return Ok(posts);
         }

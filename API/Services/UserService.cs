@@ -140,5 +140,10 @@ namespace API.Services
         {
             await _userRepository.UpdatePasswordAsync(userId, password);
         }
+
+        public async Task<UserDto> GetProfileAsync(string userId)
+        {
+            return await _userRepository.GetProfileAsync(userId);
+        }
     }
 }
