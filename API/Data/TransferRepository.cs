@@ -35,7 +35,7 @@ namespace API.Data
 
         public async Task<PagedList<Transfer>> GetAsync(QueryStringParameters queryStringParameters)
         {
-            return await PagedList<Transfer>.ToPagedList(_context.Transfers.Include(m => m.Player).ThenInclude(p => p.Team).Include(m => m.Seller)
+            return await PagedList<Transfer>.ToPagedList(_context.Transfers.AsNoTracking().Include(m => m.Player).ThenInclude(p => p.Team).Include(m => m.Seller)
             .Include(m => m.Buyer).OrderByDescending(p => p.CreatedAt),
                 queryStringParameters.PageNumber,
                 queryStringParameters.PageSize);

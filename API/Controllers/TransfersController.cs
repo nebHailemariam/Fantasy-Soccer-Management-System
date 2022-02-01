@@ -12,19 +12,17 @@ namespace API.Controllers
     [Route("api/[controller]")]
     public class TransfersController : ControllerBase
     {
-        private readonly ITransferRepository _transferRepository;
         private readonly ITransferService _transferService;
 
-        public TransfersController(ITransferRepository transferRepository, ITransferService transferService)
+        public TransfersController(ITransferService transferService)
         {
-            _transferRepository = transferRepository;
             _transferService = transferService;
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> Get([FromRoute] Guid id)
         {
-            return Ok(await _transferRepository.GetByIdAsync(id));
+            return Ok(await _transferService.GetByIdAsync(id));
         }
 
         [HttpGet("players/current-user")]
@@ -37,7 +35,7 @@ namespace API.Controllers
         [HttpGet]
         public async Task<IActionResult> Get([FromQuery] QueryStringParameters queryStringParamenter)
         {
-            var transfers = await _transferRepository.GetAsync(queryStringParamenter);
+            var transfers = await _transferService.GetAsync(queryStringParamenter);
             Response.AddPagination(ref transfers);
             return Ok(transfers);
         }

@@ -41,7 +41,7 @@ namespace API.Data
                 queryStringParameters.PageSize);
         }
 
-        public async Task<List<Player>> GetAsync(Guid teamId)
+        public async Task<List<Player>> GetByTeamIdAsync(Guid teamId)
         {
             return await _context.Players.Where(p => p.TeamId == teamId).OrderByDescending(p => p.CreatedAt).ToListAsync();
         }

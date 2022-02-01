@@ -4,17 +4,21 @@ using API.Dtos;
 using API.Entities;
 using API.Enums;
 using API.Helpers;
+using API.Helpers.Filter;
+using AutoMapper;
 
 namespace API.Services
 {
     public class PlayerService : IPlayerService
     {
         private readonly Random gen = new();
+        private readonly IMapper _mapper;
         private readonly IPlayerRepository _playerRepository;
         private readonly ITeamRepository _teamRepository;
 
-        public PlayerService(IPlayerRepository playerRepository, ITeamRepository teamRepository)
+        public PlayerService(IMapper mapper, IPlayerRepository playerRepository, ITeamRepository teamRepository)
         {
+            _mapper = mapper;
             _playerRepository = playerRepository;
             _teamRepository = teamRepository;
         }
@@ -90,10 +94,20 @@ namespace API.Services
             return await _playerRepository.CreateAsync(context, players);
         }
 
-        public async Task<List<Player>> GetPlayersByOwnerIdAsync(Guid ownerId)
+        public async Task<PagedList<PlayerResponseDto>> GetAsync(QueryStringParameters queryStringParameters)
+        {
+            return _mapper.Map<PagedList<PlayerResponseDto>>(await _playerRepository.GetAsync(queryStringParameters));
+        }
+
+        public Task<PlayerResponseDto> GetByIdAsync(Guid id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<List<PlayerResponseDto>> GetPlayersByOwnerIdAsync(Guid ownerId)
         {
             var ownersTeam = await _teamRepository.GetByOwnerIdAsync(ownerId);
-            return await _playerRepository.GetAsync(ownersTeam.Id);
+            return _mapper.Map<List<PlayerResponseDto>>(await _playerRepository.GetByTeamIdAsync(ownersTeam.Id));
         }
 
         public DateTime RandomAgeForPlayer()
@@ -105,6 +119,11 @@ namespace API.Services
             // Returns random age between 40 and 20
             int range = (end - start).Days;
             return start.AddDays(gen.Next(range));
+        }
+
+        public async Task<PagedList<PlayerResponseDto>> SearchAsync(QueryStringParameters queryStringParameters, FilterParameters<Player> filterParameters)
+        {
+            return _mapper.Map<PagedList<PlayerResponseDto>>(await _playerRepository.SearchAsync(queryStringParameters, filterParameters));
         }
 
         public async Task UpdateNameAndCountryAsync(Guid playerId, PlayerDto playerDto, Guid ownerId)

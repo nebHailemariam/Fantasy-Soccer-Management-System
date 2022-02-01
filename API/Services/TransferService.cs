@@ -4,22 +4,26 @@ using API.Dtos;
 using API.Entities;
 using API.Enums;
 using API.Helpers;
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Services
 {
     public class TransferService : ITransferService
     {
+        private readonly IMapper _mapper;
         private readonly IPlayerRepository _playerRepository;
         private readonly IServiceProvider _serviceProvider;
         private readonly ITeamRepository _teamRepository;
         private readonly ITransferRepository _transferRepository;
 
-        public TransferService(IPlayerRepository playerRepository,
+        public TransferService(IMapper mapper,
+                               IPlayerRepository playerRepository,
                                IServiceProvider serviceProvider,
                                ITeamRepository teamRepository,
                                ITransferRepository transferRepository)
         {
+            _mapper = mapper;
             _playerRepository = playerRepository;
             _serviceProvider = serviceProvider;
             _teamRepository = teamRepository;
@@ -85,7 +89,7 @@ namespace API.Services
             });
         }
 
-        public async Task<Transfer> CreateAsync(TransferCreateDto transferCreateDto, Guid ownerId)
+        public async Task<TransferResponseDto> CreateAsync(TransferCreateDto transferCreateDto, Guid ownerId)
         {
             var player = await _playerRepository.GetByIdAsync(transferCreateDto.PlayerId);
             var ownersTeam = await _teamRepository.GetByOwnerIdAsync(ownerId);
@@ -98,6 +102,10 @@ namespace API.Services
             {
                 throw new AppException("Player is already on the market", statusCode: HttpStatusCode.BadRequest);
             }
+            if (transferCreateDto.AskingPrice < 0)
+            {
+                throw new AppException("Asking price can not be less than zero", statusCode: HttpStatusCode.BadRequest);
+            }
 
             Transfer transferToCreate = new()
             {
@@ -108,13 +116,23 @@ namespace API.Services
                 PlayerTransferStatus = PlayerTransferStatus.Listed,
                 CreatedAt = DateTime.UtcNow
             };
-            return await _transferRepository.CreateAsync(transferToCreate);
+            return _mapper.Map<TransferResponseDto>(await _transferRepository.CreateAsync(transferToCreate));
         }
 
-        public async Task<List<Player>> GetPlayersOnTheMarketAsync(Guid ownerId)
+        public async Task<PagedList<TransferResponseDto>> GetAsync(QueryStringParameters queryStringParameters)
+        {
+            return _mapper.Map<PagedList<TransferResponseDto>>(await _transferRepository.GetAsync(queryStringParameters));
+        }
+
+        public async Task<TransferResponseDto> GetByIdAsync(Guid id)
+        {
+            return _mapper.Map<TransferResponseDto>(await _transferRepository.GetByIdAsync(id));
+        }
+
+        public async Task<List<PlayerResponseDto>> GetPlayersOnTheMarketAsync(Guid ownerId)
         {
             var ownersTeam = await _teamRepository.GetByOwnerIdAsync(ownerId);
-            return await _transferRepository.GetByTeamIdWithListedStatusAsync(ownersTeam.Id);
+            return _mapper.Map<List<PlayerResponseDto>>(await _transferRepository.GetByTeamIdWithListedStatusAsync(ownersTeam.Id));
         }
 
         public async Task RemovePlayerFromTheMarketAsync(Guid transferId, Guid ownerId)
