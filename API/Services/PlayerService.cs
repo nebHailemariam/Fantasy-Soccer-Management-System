@@ -121,9 +121,9 @@ namespace API.Services
             return start.AddDays(gen.Next(range));
         }
 
-        public async Task<PagedList<PlayerResponseDto>> SearchAsync(QueryStringParameters queryStringParameters, FilterParameters<Player> filterParameters)
+        public async Task<PagedList<PlayerResponseDto>> SearchAsync(QueryStringParameters queryStringParameters, FilterParameters<Player> filterParameters, string nameSearch)
         {
-            return _mapper.Map<PagedList<PlayerResponseDto>>(await _playerRepository.SearchAsync(queryStringParameters, filterParameters));
+            return _mapper.Map<PagedList<PlayerResponseDto>>(await _playerRepository.SearchAsync(queryStringParameters, filterParameters, nameSearch));
         }
 
         public async Task UpdateNameAndCountryAsync(Guid playerId, PlayerDto playerDto, Guid ownerId)

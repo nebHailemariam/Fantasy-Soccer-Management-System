@@ -13,7 +13,7 @@ namespace API.Services
         Task<PlayerResponseDto> GetByIdAsync(Guid id);
         Task<List<PlayerResponseDto>> GetPlayersByOwnerIdAsync(Guid ownerId);
         DateTime RandomAgeForPlayer();
-        Task<PagedList<PlayerResponseDto>> SearchAsync(QueryStringParameters queryStringParameters, FilterParameters<Player> filterParameters);
+        Task<PagedList<PlayerResponseDto>> SearchAsync(QueryStringParameters queryStringParameters, FilterParameters<Player> filterParameters, string nameSearch);
         Task UpdateNameAndCountryAsync(Guid playerId, PlayerDto playerDto, Guid ownerId);
     }
 }

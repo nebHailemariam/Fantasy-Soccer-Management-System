@@ -61,7 +61,7 @@ namespace Test.IntegrationTests
             // Act
             response = await _client.GetAsync(currentUserPlayersEndpoint);
             content = await response.Content.ReadAsStringAsync();
-            var players = JsonConvert.DeserializeObject<List<Player>>(content);
+            var players = JsonConvert.DeserializeObject<List<PlayerResponseDto>>(content);
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
