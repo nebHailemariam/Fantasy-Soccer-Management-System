@@ -16,12 +16,12 @@ namespace Test.IntegrationTests
 {
     [Collection("Integration Test Collection 3")]
     [TestCaseOrderer("Test.Helpers.Orderers.PriorityOrderer", "Test")]
-    public class TeamsControllerTestCollection3 :
+    public class TestCollection_4_TeamsController :
            IClassFixture<CustomWebApplicationFactory<Program>>
     {
         private readonly HttpClient _client;
 
-        public TeamsControllerTestCollection3(
+        public TestCollection_4_TeamsController(
             CustomWebApplicationFactory<Program> factory)
         {
             _client = factory.CreateClient(new WebApplicationFactoryClientOptions
