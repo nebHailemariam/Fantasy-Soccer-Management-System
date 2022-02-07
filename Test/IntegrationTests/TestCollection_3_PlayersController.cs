@@ -10,17 +10,19 @@ using System.Net;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Net.Http.Headers;
+using API.Entities;
 
 namespace Test.IntegrationTests
 {
-    [Collection("Integration Test Collection 2")]
+
+    [Collection("Integration Test Collection 3")]
     [TestCaseOrderer("Test.Helpers.Orderers.PriorityOrderer", "Test")]
-    public class TransfersControllerTestCollection2 :
-           IClassFixture<CustomWebApplicationFactory<Program>>
+    public class TestCollection_3_PlayersController :
+   IClassFixture<CustomWebApplicationFactory<Program>>
     {
         private readonly HttpClient _client;
 
-        public TransfersControllerTestCollection2(
+        public TestCollection_3_PlayersController(
             CustomWebApplicationFactory<Program> factory)
         {
             _client = factory.CreateClient(new WebApplicationFactoryClientOptions
@@ -29,8 +31,8 @@ namespace Test.IntegrationTests
             });
         }
 
-        [Fact, TestPriority(2)]
-        public async Task List_User_1s_Players_In_The_Market_HTTP_Status_Code_OK()
+        [Fact, TestPriority(0)]
+        public async Task Get_User_1s_Players_Count_After_Transfer_HTTP_Status_Code_OK()
         {
             // Arrange
             string loginEndPoint = "/api/Users/login";
@@ -59,33 +61,15 @@ namespace Test.IntegrationTests
             // Act
             response = await _client.GetAsync(currentUserPlayersEndpoint);
             content = await response.Content.ReadAsStringAsync();
-            var players = JsonConvert.DeserializeObject<List<PlayerResponseDto>>(content);
+            var players = JsonConvert.DeserializeObject<List<Player>>(content);
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.Equal(20, players.Count);
-
-            // Arrange
-            string transferEndPoint = "/api/Transfers/current-user/list-player";
-            var player = players[0];
-            TransferCreateDto transferCreateDto = new()
-            {
-                PlayerId = player.Id,
-                AskingPrice = player.Value
-            };
-
-            json = JsonConvert.SerializeObject(transferCreateDto);
-            data = new StringContent(json, Encoding.UTF8, "application/json");
-
-            // Act
-            response = await _client.PostAsync(transferEndPoint, data);
-
-            // Assert
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Equal(19, players.Count);
         }
 
-        [Fact, TestPriority(3)]
-        public async Task User_2_Buys_User_1s_Player_HTTP_Status_Code_No_content()
+        [Fact, TestPriority(1)]
+        public async Task Get_User_2s_Players_Count_After_Transfer_HTTP_Status_Code_OK()
         {
             // Arrange
             string loginEndPoint = "/api/Users/login";
@@ -106,27 +90,57 @@ namespace Test.IntegrationTests
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
             // Arrange
-            var PlayersOnTheMarketEndpoint = "/api/Transfers";
+            var currentUserPlayersEndpoint = "/api/Players/current-user";
             var content = await response.Content.ReadAsStringAsync();
             var token = JsonConvert.DeserializeObject<Dictionary<string, string>>(content)["token"];
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
             // Act
-            response = await _client.GetAsync(PlayersOnTheMarketEndpoint);
+            response = await _client.GetAsync(currentUserPlayersEndpoint);
             content = await response.Content.ReadAsStringAsync();
-            var transfers = JsonConvert.DeserializeObject<List<TransferResponseDto>>(content);
+            var players = JsonConvert.DeserializeObject<List<Player>>(content);
+
+            // Assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Equal(21, players.Count);
+        }
+
+        [Fact, TestPriority(2)]
+        public async Task Get_User_2s_Bought_Player_Value_After_Transfer_Assert_Value_Greater_Than_1000000()
+        {
+            // Arrange
+            string loginEndPoint = "/api/Users/login";
+
+            UserLoginDto userLoginDto = new()
+            {
+                Email = "doe.smith@example.com",
+                Password = "password"
+            };
+
+            var json = JsonConvert.SerializeObject(userLoginDto);
+            var data = new StringContent(json, Encoding.UTF8, "application/json");
+
+            // Act
+            var response = await _client.PostAsync(loginEndPoint, data);
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
             // Arrange
-            string buyPlayerEndPoint = $"/api/Transfers/{transfers[0].Id}/buy";
+            var currentUserPlayersEndpoint = "/api/Players/current-user";
+            var content = await response.Content.ReadAsStringAsync();
+            var token = JsonConvert.DeserializeObject<Dictionary<string, string>>(content)["token"];
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
             // Act
-            response = await _client.PatchAsync(buyPlayerEndPoint, new StringContent("", Encoding.UTF8, "application/json"));
+            response = await _client.GetAsync(currentUserPlayersEndpoint);
+            content = await response.Content.ReadAsStringAsync();
+            List<Player>? players = JsonConvert.DeserializeObject<List<Player>>(content);
 
             // Assert
-            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            double? recentlyAddedPlayerValue = players.Find(p => p.Value > 1000000)?.Value;
+            Assert.True(1000000 < recentlyAddedPlayerValue);
         }
     }
 }
