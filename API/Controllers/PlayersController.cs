@@ -52,9 +52,9 @@ namespace API.Controllers
         [HttpGet]
         public async Task<IActionResult> Get([FromQuery] QueryStringParameters queryStringParamenter)
         {
-            var posts = await _playerService.GetAsync(queryStringParamenter);
-            Response.AddPagination(ref posts);
-            return Ok(posts);
+            var players = await _playerService.GetAsync(queryStringParamenter);
+            Response.AddPagination(ref players);
+            return Ok(players);
         }
     }
 }
