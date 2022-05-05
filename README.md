@@ -26,5 +26,5 @@
 # Technologies
 
 - ### Asp.Net Core
-- ### PostgreSQL Sql Online Database
+- ### PostgreSQL
 - ### XUnit test framework
