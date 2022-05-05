@@ -26,5 +26,5 @@
 # Technologies
 
 - ### Asp.Net Core
-- ### Elephant Sql Online Database
+- ### PostgreSQL Sql Online Database
 - ### XUnit test framework
