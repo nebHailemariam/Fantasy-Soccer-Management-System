@@ -86,7 +86,7 @@ namespace Test.IntegrationTests
             {
                 FirstName = "Doe",
                 LastName = "Smith",
-                Email = "doe.smith1@example.com",
+                Email = "doe.smith@example.com",
                 Password = "password",
                 ConfirmPassword = "password"
             };
