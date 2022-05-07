@@ -1,0 +1,16 @@
+{
+  "jenkins-runner.hostConfigs": {
+    "local": {
+      "url": "http://localhost:8080",
+      "user": "admin",
+      "password": "password"
+    }
+  },
+  "jenkins-runner.jobs": {
+    "Soccer-Management-System": {
+      "runWith": "local",
+      "name": "Soccer-Management-System",
+      "isDefault": true
+    }
+  }
+}
