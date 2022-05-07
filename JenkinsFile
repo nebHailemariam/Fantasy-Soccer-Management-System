@@ -1,9 +1,6 @@
 pipeline {
     agent any
 
-    // Add GitHub hook trigger for GITScm polling
-    triggers { pollSCM('H */4 * * 1-5') }
-    
     stages {
 
         stage('Checkout') {
