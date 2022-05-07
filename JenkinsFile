@@ -1,0 +1,34 @@
+pipeline {
+    agent any
+    stages {
+
+        stage('Checkout') {
+        steps {
+            // Get code from a GitHub repository
+            git credentialsId: '0cfd689a-5a9c-47c9-b912-7918776efeb7', 
+                url: 'git@github.com:nebHailemariam/Fantasy-Soccer-Management-System.git',
+                branch: 'dev'
+            }
+        }
+
+        stage('Build') {
+            steps {
+                // Build .net project
+                dotnetBuild project: 'Fantasy-Soccer-Management-System.sln'
+                
+                // Run tests
+                sh 'dotnet test -l "trx;logFileName=report.xml"'
+            }
+        }
+    }
+    post {
+        // Save report allways. This could be set to on success or failure 
+        always { 
+            // Save test report
+            archiveArtifacts artifacts: 'Test/TestResults/report.xml'
+
+            // Display tests with xunit
+            xunit([MSTest(excludesPattern: '', pattern: 'Test/TestResults/report.xml', stopProcessingIfError: true)])
+        }
+    }
+}
