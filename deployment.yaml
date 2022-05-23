@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fantasy-soccer-deployment
+  labels:
+    app: fantasy-soccer
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: fantasy-soccer
+  template:
+    metadata:
+      labels:
+        app: fantasy-soccer
+    spec:
+      containers:
+        - name: fantasy-soccer
+          image: nebhailemariam/fantasy-soccer-management-system:38
+          ports:
+            - containerPort: 80
+      imagePullSecrets:
+        - name: docker-hub-secret
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: fantasy-soccer-service
+spec:
+  type: NodePort
+  selector:
+    app: fantasy-soccer
+  ports:
+    - port: 80 # Default port for image
