@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: fantasy-soccer
-          image: nebhailemariam/fantasy-soccer-management-system:38
+          image: nebhailemariam/fantasy-soccer-management-system:'\$(BUILD_NUMBER)'
           ports:
             - containerPort: 80
       imagePullSecrets:
