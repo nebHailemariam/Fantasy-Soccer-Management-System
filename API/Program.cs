@@ -172,7 +172,8 @@ if (app.Environment.IsDevelopment())
 // Add global error handler.
 app.UseMiddleware<ErrorHandlerMiddleware>();
 
-app.UseHttpsRedirection();
+// Disable Https Redirection
+// app.UseHttpsRedirection();
 
 app.UseCors(MyAllowSpecificOrigins);
 

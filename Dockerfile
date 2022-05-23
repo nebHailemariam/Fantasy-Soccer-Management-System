@@ -13,4 +13,7 @@ RUN dotnet publish -c Release -o out
 FROM mcr.microsoft.com/dotnet/aspnet:6.0
 WORKDIR /src
 COPY --from=build-env /src/out .
+
+ENV ASPNETCORE_URLS http://*:80
+
 ENTRYPOINT ["dotnet", "API.dll"]
