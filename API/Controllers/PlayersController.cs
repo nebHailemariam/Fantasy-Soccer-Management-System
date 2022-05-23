@@ -21,12 +21,14 @@ namespace API.Controllers
         }
 
         [HttpGet("{id}")]
+        [AllowAnonymous]
         public async Task<IActionResult> Get([FromRoute] Guid id)
         {
             return Ok(await _playerService.GetByIdAsync(id));
         }
 
         [HttpGet("search")]
+        [AllowAnonymous]
         public async Task<IActionResult> Search([FromQuery] QueryStringParameters queryStringParameters, [FromQuery] FilterParameters<Player> filterParameters, [FromQuery] string nameSearch)
         {
             var players = await _playerService.SearchAsync(queryStringParameters, filterParameters, nameSearch);
@@ -50,6 +52,7 @@ namespace API.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public async Task<IActionResult> Get([FromQuery] QueryStringParameters queryStringParamenter)
         {
             var players = await _playerService.GetAsync(queryStringParamenter);
