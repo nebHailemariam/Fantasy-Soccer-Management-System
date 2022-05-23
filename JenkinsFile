@@ -1,35 +1,77 @@
 pipeline {
-    agent any
+  agent any
 
-    stages {
+  environment {
+    registry = "nebhailemariam/fantasy-soccer-management-system"
+    registryCredential = 'docker-registry-credential'
+    dockerImage = ''
+  }
 
-        stage('Checkout') {
-        steps {
-            // Get code from a GitHub repository
-            git credentialsId: '0cfd689a-5a9c-47c9-b912-7918776efeb7', 
-                url: 'git@github.com:nebHailemariam/Fantasy-Soccer-Management-System.git',
-                branch: 'dev'
-            }
-        }
+  stages {
 
-        stage('Build') {
-            steps {
-                // Build .net project
-                dotnetBuild project: 'Fantasy-Soccer-Management-System.sln'
-                
-                // Run tests
-                sh 'dotnet test -l "trx;logFileName=report.xml"'
-            }
-        }
+    stage('Checkout') {
+      steps {
+        // Get code from a GitHub repository
+        git credentialsId: '0cfd689a-5a9c-47c9-b912-7918776efeb7',
+          url: 'git@github.com:nebHailemariam/Fantasy-Soccer-Management-System.git',
+          branch: 'dev'
+      }
     }
-    post {
-        // Save report allways. This could be set to on success or failure 
-        always { 
-            // Save test report
-            archiveArtifacts artifacts: 'Test/TestResults/report.xml'
 
-            // Display tests with xunit
-            xunit([MSTest(excludesPattern: '', pattern: 'Test/TestResults/report.xml', stopProcessingIfError: true)])
-        }
+    stage('Build') {
+      steps {
+        // Build .net project
+        dotnetBuild project: 'Fantasy-Soccer-Management-System.sln'
+      }
     }
+
+    stage('Test') {
+      steps {
+        // Run tests
+        sh 'dotnet test -l "trx;logFileName=report.xml"'
+      }
+    }
+    
+    stage('Build image') {
+      steps {
+        script {
+          dockerImage = docker.build registry + ":$BUILD_NUMBER"
+        }
+      }
+    }
+    
+    stage('Push image to registry') {
+      steps {
+        script {
+          docker.withRegistry('', registryCredential) {
+            dockerImage.push()
+          }
+        }
+      }
+    }
+
+    stage('Deploy') {
+      steps {
+        sh "sed -i 's/BUILD_NUMBER/'${BUILD_NUMBER}'/' deployment.yaml" 
+        sh """sed -i 's/)//g' deployment.yaml"""
+        sh """sed -i 's/\\\$(//g' deployment.yaml"""
+        sh """sed -i s/"'"//g deployment.yaml"""
+        sh """sed -i 's/\\\\//g' deployment.yaml"""
+
+        withKubeConfig([credentialsId: 'MinikubeKey', serverUrl: 'https://192.168.49.2:8443/']) {
+          sh 'kubectl apply -f deployment.yaml'
+        }
+      }
+    }
+  }
+  post {
+    // Save report allways. This could be set to on success or failure 
+    always {
+      // Save test report
+      archiveArtifacts artifacts: 'Test/TestResults/report.xml'
+
+      // Display tests with xunit
+      xunit([MSTest(excludesPattern: '', pattern: 'Test/TestResults/report.xml', stopProcessingIfError: true)])
+    }
+  }
 }
