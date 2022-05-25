@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: fantasy-soccer
-          image: nebhailemariam/fantasy-soccer-management-system:'\$(BUILD_NUMBER)'
+          image: nebhailemariam/fantasy-soccer-management-system:20
           ports:
             - containerPort: 80
       imagePullSecrets:
@@ -31,4 +31,5 @@ spec:
   selector:
     app: fantasy-soccer
   ports:
-    - port: 80 # Default port for image
+    - port: 7000
+      targetPort: 80
