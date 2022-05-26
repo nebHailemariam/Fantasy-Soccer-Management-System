@@ -19,6 +19,7 @@ spec:
           image: nebhailemariam/fantasy-soccer-management-system:'\$(BUILD_NUMBER)'
           ports:
             - containerPort: 80
+            - containerPort: 443
       imagePullSecrets:
         - name: docker-hub-secret
 ---

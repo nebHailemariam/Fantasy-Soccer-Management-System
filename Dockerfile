@@ -1,6 +1,7 @@
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build-env
 WORKDIR /src
 EXPOSE 80
+EXPOSE 443
 
 # Copy everything
 COPY ./API ./
